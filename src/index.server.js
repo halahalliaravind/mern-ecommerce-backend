@@ -7,8 +7,8 @@ const mongoose = require("mongoose");
 //Routes
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin/auth");
-const categoryRoutes = require('./routes/category')
-// const productRoute = require('./routes/product')
+const categoryRoutes = require("./routes/category");
+const productRoutes = require("./routes/product");
 
 //Environment varibale
 env.config();
@@ -29,11 +29,12 @@ mongoose
   });
 
 app.use(express.json());
+
 //usage of routes in actually
 app.use("/api", authRoutes);
 app.use("/api", adminRoutes);
-app.use('/api',categoryRoutes);
-// app.use('/api',productRoute);
+app.use("/api", categoryRoutes);
+app.use("/api", productRoutes);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
