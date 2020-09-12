@@ -1,5 +1,6 @@
 const express = require("express");
 const env = require("dotenv");
+const path = require("path");
 const app = express();
 // const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
@@ -30,6 +31,8 @@ mongoose
   });
 
 app.use(express.json());
+// expose some API endpoints to browser
+app.use("/public", express.static(path.join(__dirname, "uploads")));
 
 //usage of routes in actually
 app.use("/api", authRoutes);
