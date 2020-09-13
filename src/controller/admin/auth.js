@@ -16,7 +16,7 @@ exports.signup = (req, res) => {
       email,
       password,
       username: Math.random().toString(),
-      role:'admin'
+      role: "admin",
     });
     _user.save((error, data) => {
       if (error) {
@@ -38,11 +38,16 @@ exports.signin = (req, res) => {
   User.findOne({ email: req.body.email }).exec((error, user) => {
     if (error) return res.status(400).json({ error });
     if (user) {
-      if (user.authenticate(req.body.password) && user.role ==='admin') {
-        const token = jwt.sign({ _id: user._id,role:user.role  }, process.env.JWT_SECRET, {
-          expiresIn: "1h",
-        });
+      if (user.authenticate(req.body.password) && user.role === "admin") {
+        const token = jwt.sign(
+          { _id: user._id, role: user.role },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: "1h",
+          }
+        );
         const { _id, firstName, lastName, email, role, fullName } = user;
+        res.cookie("token", token, { expiresIn: "1h" });
         res.status(200).json({
           token,
           user: {
@@ -65,15 +70,12 @@ exports.signin = (req, res) => {
   });
 };
 
-//Middleware
-// exports.requireSignin = (req,res,next)=>{
-// const token = req.headers.authorization.split(" ")[1];
-// const user = jwt.verify(token,process.env.JWT_SECRET);
-// req.user = user;
-// console.log(token);
-// next();
-// }
+//Admin-SignOut Route
+exports.signout = (req, res) => {
+  res.clearCookie("token");
+  res.status(200).json({
+    message:'SignOut Successfully...'
+  })
+};
 
 //Profile Route
-
-

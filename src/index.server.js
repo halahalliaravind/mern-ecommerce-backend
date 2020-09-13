@@ -5,6 +5,8 @@ const app = express();
 // const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
+const cors = require('cors');
+
 //Routes
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin/auth");
@@ -31,6 +33,8 @@ mongoose
   });
 
 app.use(express.json());
+//Handling cors issue
+app.use(cors());
 // expose some API endpoints to browser
 app.use("/public", express.static(path.join(__dirname, "uploads")));
 
