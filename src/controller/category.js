@@ -1,5 +1,6 @@
 const Category = require("../models/category");
 const slugify = require("slugify");
+const shortid = require("shortid");
 
 //SubCategoryLists Logic
 function createCategories(categories, parentId = null) {
@@ -25,7 +26,7 @@ function createCategories(categories, parentId = null) {
 exports.addCategory = (req, res) => {
   const categoryObj = {
     name: req.body.name,
-    slug: slugify(req.body.name),
+    slug: `${slugify(req.body.name)}-${shortid.generate()}`,
   };
   if (req.file) {
     categoryObj.categoryImage =
@@ -52,7 +53,7 @@ exports.getCategories = (req, res) => {
     }
   });
 };
-
+//update an category
 exports.updateCategories = async (req, res) => {
   const { _id, name, parentId, type } = req.body;
   const updatedCategories = [];
@@ -66,7 +67,7 @@ exports.updateCategories = async (req, res) => {
         category.parentId = parentId[i];
       }
       const updatedCategory = await Category.findOneAndUpdate(
-        { _id:_id[i] },
+        { _id: _id[i] },
         category,
         { new: true }
       );
@@ -87,5 +88,21 @@ exports.updateCategories = async (req, res) => {
       );
       return res.status(201).json({ updateCategories });
     }
+  }
+};
+//delete an category
+exports.deleteCategories = async (req, res) => {
+  const { ids } = req.body.payload;
+  const deletedCategories = [];
+  for (let i = 0; i < ids.length; i++) {
+    const deleteCategory = await Category.findByIdAndDelete({
+      _id: ids[i]._id,
+    });
+    deletedCategories.push(deleteCategory);
+  }
+  if (deletedCategories.length == ids.length) {
+    res.status(200).json({ message: "Category Removed" });
+  } else {
+    res.status(400).json({ message: "Something went wrong" });
   }
 };
